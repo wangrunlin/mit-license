@@ -1,11 +1,8 @@
-/*
-IMPORTANT:   Set the `github_token` environment variable to a personal access token
-             with at least the `public_repo` scope for the API.
-
-Server port: The `PORT` environment variable can also be set to control the port the server
-             should be hosted on.
-*/
+// IMPORTANT: Set the `github_token` environment variable to a personal access token with at least the `public_repo` scope for the API.
+// The `PORT` environment variable can also be set to control the port the server should be hosted on.
 import path, {dirname} from 'node:path'
+import {fileURLToPath} from 'node:url'
+import process from 'node:process'
 import express from 'express'
 import minify from 'express-minify'
 import favicon from 'serve-favicon'
@@ -13,8 +10,6 @@ import postcssMiddleware from 'postcss-middleware'
 import tempDirectory from 'temp-dir'
 import postcssPresetEnv from 'postcss-preset-env'
 import cors from 'cors'
-
-import {fileURLToPath} from 'node:url'
 
 import postRoute from './routes/post.js'
 import getRoute from './routes/get.js'
@@ -28,8 +23,8 @@ const directoryName = dirname(fileURLToPath(import.meta.url))
 const app = express()
 app.use(
   minify({
-    cache: tempDirectory
-  })
+    cache: tempDirectory,
+  }),
 )
 app.use(favicon(path.join(directoryName, 'favicon.ico')))
 app.set('views', path.join(directoryName, '/licenses'))
@@ -42,14 +37,14 @@ app.use(
   postcssMiddleware({
     plugins: [
       postcssPresetEnv({
-        overrideBrowserslist: '>= 0%'
-      })
+        overrideBrowserslist: '>= 0%',
+      }),
     ],
     src(request) {
       return path.join(directoryName, 'themes', request.path)
-    }
+    },
   }),
-  express.static('themes')
+  express.static('themes'),
 )
 
 // Middleware
@@ -59,8 +54,8 @@ app.use(cors())
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(
   express.urlencoded({
-    extended: true
-  })
+    extended: true,
+  }),
 )
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json())
